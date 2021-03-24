@@ -1,10 +1,11 @@
 define({ "api": [
   {
     "type": " post ",
-    "url": "/registerMongoDB",
+    "url": "/register",
     "title": "Create a new user",
     "group": "Authentication",
     "name": "post_create_user",
+    "version": "1.0.0",
     "description": "<p>Register a new user to KickApp.</p>",
     "parameter": {
       "fields": {
@@ -70,7 +71,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Request example:",
-          "content": "curl --location --request POST '/registerMongoDB' \\\n--header 'Content-Type: application/json' \\\n--data-raw '{\n\t\"email\": \"some@email.com\",\n\t\"pseudo\": \"randomPseudo\",\n\t\"username\": \"randomUsername\",\n\t\"password\": \"somFancyPassword\"\n}'",
+          "content": "curl --location --request POST '/register' \\\n--header 'Content-Type: application/json' \\\n--data-raw '{\n\t\"email\": \"some@email.com\",\n\t\"pseudo\": \"randomPseudo\",\n\t\"username\": \"randomUsername\",\n\t\"password\": \"somFancyPassword\"\n}'",
           "type": "json"
         }
       ]
@@ -83,7 +84,7 @@ define({ "api": [
             "type": "json",
             "optional": false,
             "field": "400",
-            "description": "<p>Standard error for missing or wrong mandatory fields.</p>"
+            "description": "<p>Standard error for missing or wrong mandatory fields value.</p>"
           },
           {
             "group": "Status Code",
@@ -104,27 +105,27 @@ define({ "api": [
       "examples": [
         {
           "title": "Bad request:",
-          "content": "POST /registerMongoDB HTTP/1.1 400\n{ \"message\": [\n  {\n  \t\"message\": \"\\\"username\\\" is required\",\n  \t\"path\": [\n  \t\t\"username\"\n  \t],\n  \t\"type\": \"any.required\",\n  \t\"context\": {\n  \t\t\"label\": \"username\",\n  \t\t\"key\": \"username\"\n  \t}\n  }\n]}",
+          "content": "POST /register HTTP/1.1 400\n{ \"message\": [\n  {\n  \t\"message\": \"\\\"username\\\" is required\",\n  \t\"path\": [\n  \t\t\"username\"\n  \t],\n  \t\"type\": \"any.required\",\n  \t\"context\": {\n  \t\t\"label\": \"username\",\n  \t\t\"key\": \"username\"\n  \t}\n  }\n]}",
           "type": "json"
         },
         {
           "title": "Conflict:",
-          "content": "POST /registerMongoDB HTTP/1.1 409\n{ message: 'Email already exists', emailAlreadyExisting: true }",
+          "content": "POST /register HTTP/1.1 409\n{ reason: 'Email already exists', emailAlreadyExisting: true }",
           "type": "json"
         },
         {
           "title": "Conflict:",
-          "content": "POST /registerMongoDB HTTP/1.1 409\n{ message: 'Username already exists', usernameAlreadyExisting: true }",
+          "content": "POST /register HTTP/1.1 409\n{ reason: 'Username already exists', usernameAlreadyExisting: true }",
           "type": "json"
         },
         {
           "title": "Internal Server Error:",
-          "content": "POST /registerMongoDB HTTP/1.1 500\n{ message: 'error hashing password' }",
+          "content": "POST /register HTTP/1.1 500\n{ reason: 'error hashing password' }",
           "type": "json"
         },
         {
           "title": "Internal Server Error:",
-          "content": "POST /registerMongoDB HTTP/1.1 500\n{ message: 'error creating user' }",
+          "content": "POST /register HTTP/1.1 500\n{ reason: 'error creating user' }",
           "type": "json"
         }
       ]
@@ -133,13 +134,108 @@ define({ "api": [
       "examples": [
         {
           "title": "Success:",
-          "content": "POST /registerMongoDB HTTP/1.1 200\n{ message: \"user successfully created\", registeredIn: true }",
+          "content": "POST /register HTTP/1.1 200\n{ message: \"user successfully created\", registeredIn: true }",
           "type": "json"
         }
       ]
     },
-    "version": "0.0.0",
-    "filename": "../kickApp/server/controllers/auth.js",
+    "filename": "../kickapp-api/src/controllers/auth.js",
+    "groupTitle": "Authentication"
+  },
+  {
+    "type": " post ",
+    "url": "/login",
+    "title": "Log in a new user",
+    "group": "Authentication",
+    "name": "post_login_user",
+    "version": "1.0.0",
+    "description": "<p>Log in a new user to KickApp.</p>",
+    "parameter": {
+      "fields": {
+        "Body": [
+          {
+            "group": "Body",
+            "type": "String",
+            "optional": false,
+            "field": "username",
+            "description": "<p>User's name which can be displayed.</p>"
+          },
+          {
+            "group": "Body",
+            "type": "String",
+            "optional": false,
+            "field": "password",
+            "description": "<p>User's password.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Request example:",
+          "content": "curl --location --request POST '/login' \\\n--header 'Content-Type: application/json' \\\n--data-raw '{\n\t\"username\": \"randomUsername\",\n\t\"password\": \"somFancyPassword\"\n}'",
+          "type": "json"
+        }
+      ]
+    },
+    "error": {
+      "fields": {
+        "Status Code": [
+          {
+            "group": "Status Code",
+            "type": "json",
+            "optional": false,
+            "field": "400",
+            "description": "<p>Standard error for missing or wrong mandatory fields value.</p>"
+          },
+          {
+            "group": "Status Code",
+            "type": "json",
+            "optional": false,
+            "field": "404",
+            "description": "<p>Standard error for resource not found.</p>"
+          },
+          {
+            "group": "Status Code",
+            "type": "json",
+            "optional": false,
+            "field": "500",
+            "description": "<p>Standard message for database error.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Bad Request missing fields value:",
+          "content": "POST /login HTTP/1.1 400\n{ reason: 'No empty fields allowed!' }",
+          "type": "json"
+        },
+        {
+          "title": "Bad Request missing fields value:",
+          "content": "POST /login HTTP/1.1 400\n{ reason: 'Incorrect password!' }",
+          "type": "json"
+        },
+        {
+          "title": "Conflict:",
+          "content": "POST /login HTTP/1.1 404\n{ reason: 'Not found.'",
+          "type": "json"
+        },
+        {
+          "title": "Internal Server Error:",
+          "content": "POST /login HTTP/1.1 500\n{ message: 'An error occured!', $err }",
+          "type": "json"
+        }
+      ]
+    },
+    "success": {
+      "examples": [
+        {
+          "title": "Success:",
+          "content": "POST /login HTTP/1.1 200\n{ message: 'Login successful', $user, $token }",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "../kickapp-api/src/controllers/auth.js",
     "groupTitle": "Authentication"
   }
 ] });
