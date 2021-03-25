@@ -1,5 +1,77 @@
 [
   {
+    "type": " get ",
+    "url": "/verify/:emailToken",
+    "title": "verify a new user",
+    "group": "Authentication",
+    "name": "get_verify_user",
+    "version": "1.0.0",
+    "description": "<p>Verify a new user to KickApp.</p>",
+    "parameter": {
+      "fields": {
+        "Params": [
+          {
+            "group": "Params",
+            "type": "String",
+            "optional": false,
+            "field": "emailToken",
+            "description": "<p>User's personal token.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Request example:",
+          "content": "curl --location --request GET '/verify/15AdY9' \\\n--header 'Content-Type: application/json'",
+          "type": "json"
+        }
+      ]
+    },
+    "error": {
+      "fields": {
+        "Status Code": [
+          {
+            "group": "Status Code",
+            "type": "json",
+            "optional": false,
+            "field": "404",
+            "description": "<p>Standard error for resource not found.</p>"
+          },
+          {
+            "group": "Status Code",
+            "type": "json",
+            "optional": false,
+            "field": "500",
+            "description": "<p>Standard message for database error.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Conflict:",
+          "content": "POST /verify/15AdY9 HTTP/1.1 404\n{ reason: 'Not found.'",
+          "type": "json"
+        },
+        {
+          "title": "Internal Server Error:",
+          "content": "POST /verify/15AdY9 HTTP/1.1 500\n{ message: 'An error occured!', $err }",
+          "type": "json"
+        }
+      ]
+    },
+    "success": {
+      "examples": [
+        {
+          "title": "Success:",
+          "content": "POST /login HTTP/1.1 200\n{ message: '$username, your account is verified. You can now log in.'}",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "../kickapp-api/src/controllers/auth.js",
+    "groupTitle": "Authentication"
+  },
+  {
     "type": " post ",
     "url": "/register",
     "title": "Create a new user",
