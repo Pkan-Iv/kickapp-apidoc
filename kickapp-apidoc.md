@@ -6,6 +6,7 @@ KickApp-API
  - [Authentication](#Authentication)
    - [Create a new user](#Create-a-new-user)
    - [Log in a new user](#Log-in-a-new-user)
+   - [verify a new user](#verify-a-new-user)
 
 ___
 
@@ -190,5 +191,62 @@ POST /login HTTP/1.1 404
 
 ```json
 POST /login HTTP/1.1 500
+{ message: 'An error occured!', $err }
+```
+
+## <a name='verify-a-new-user'></a> verify a new user
+[Back to top](#top)
+
+<p>Verify a new user to KickApp.</p>
+
+```
+ GET  /verify/:emailToken
+```
+
+### Parameters - `Params`
+
+| Name     | Type       | Description                           |
+|----------|------------|---------------------------------------|
+| emailToken | `String` | <p>User's personal token.</p> |
+
+### Parameters examples
+`json` - Request example:
+
+```json
+curl --location --request GET '/verify/15AdY9' \
+--header 'Content-Type: application/json'
+```
+
+### Success response example
+
+#### Success response example - `Success:`
+
+```json
+POST /login HTTP/1.1 200
+{ message: '$username, your account is verified. You can now log in.'}
+```
+
+### Error response
+
+#### Error response - `Status Code`
+
+| Name     | Type       | Description                           |
+|----------|------------|---------------------------------------|
+| 404 | `json` | <p>Standard error for resource not found.</p> |
+| 500 | `json` | <p>Standard message for database error.</p> |
+
+### Error response example
+
+#### Error response example - `Conflict:`
+
+```json
+POST /verify/15AdY9 HTTP/1.1 404
+{ reason: 'Not found.'
+```
+
+#### Error response example - `Internal Server Error:`
+
+```json
+POST /verify/15AdY9 HTTP/1.1 500
 { message: 'An error occured!', $err }
 ```
